@@ -5,6 +5,7 @@ const hbs = require('hbs')
 var routes = require('../routes/routes');
 var connection = require('../lib/db');
 var refill = require('../lib/refill');
+var company = require('../classes/company');
 
 const app = express()
 
@@ -40,6 +41,53 @@ app.get('/contact', (req, res) => {
         title: 'Get in Touch',
         name: 'Team Kilimanjaro'
     })
+})
+
+app.get('/company/:id', (req, res) => {
+
+    const query = "select name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, " +
+                  "recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, " +
+                  "throwOutExpiringItems, sellInBulk, byo, extraChargeSingleItem, provideReusableItems, " +
+                  "employeesUseSingleUseItems, employeesSingleUseItemsNotes " +
+                  "from company " +
+                  "where companyid = " + req.params.id
+    connection.query(query,function(err, results, fields) { 
+        if (err) {
+            return res.send({
+                error: err
+            })
+        }
+        else {
+            let companyObject = new company.Company()
+            for (var index = 0 ; index < results.length ; index++) {
+                companyObject.name = results[index].name;
+                companyObject.website = results[index].website;
+                companyObject.city = results[index].city;
+                companyObject.province = results[index].province;
+                companyObject.address = results[index].address;
+                companyObject.expiringItemnsNote = results[index].expiringItemnsNote;
+                companyObject.provideReusableItemsNotes = results[index].provideReusableItemsNotes;
+                companyObject.recencompanyObjecttory = results[index].recencompanyObjecttory;
+                companyObject.comments = results[index].comments;
+                companyObject.loosePercentage = results[index].loosePercentage;
+                companyObject.discountExpiringItems = results[index].discountExpiringItems;
+                companyObject.donateExpiringItems = results[index].donateExpiringItems;
+                companyObject.throwOutExpiringItems = results[index].throwOutExpiringItems;
+                companyObject.sellInBulk = results[index].sellInBulk;
+                companyObject.byo = results[index].byo;
+                companyObject.extraChargeSingleItem = results[index].extraChargeSingleItem;
+                companyObject.provideReusableItems = results[index].provideReusableItems;
+                companyObject.employeesUseSingleUseItems = results[index].employeesUseSingleUseItems;
+                companyObject.employeesSingleUseItemsNotes = results[index].employeesSingleUseItemsNotes;
+            }
+            res.render('company', {
+                title: 'Company',
+                name: 'Team Kilimanjaro',
+                company: JSON.stringify(companyObject)
+            })
+        }
+                            
+    });
 })
 
 app.get('/dashboard', (req, res) => {
