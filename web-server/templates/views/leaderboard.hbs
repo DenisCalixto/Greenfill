@@ -11,9 +11,17 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <img class="portrait" src="/img/me.jpeg">
+        <br>
+        {{leaders}}
+        {{#each leaders}}
+            result:{{name}}-{{quantity}}<br>
+        {{/each}}
+        {{#each people}}
+            <li>{{this}}</li>
+        {{/each}}
     </div>
-    
+    <br>
+    <br>
     {{>footer}}
 </body>
 
