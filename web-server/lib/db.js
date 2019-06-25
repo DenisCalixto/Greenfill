@@ -13,6 +13,14 @@ connection.connect(function(error){
   }else{
     console.log('Connected!:)');
   }
-});  
+});
+
+// connection.end(function(error){
+//   if(!!error){
+//     console.log(error);
+//   }else{
+//     console.log('Disconnected!:(');
+//   }
+// });
 
 module.exports = connection;

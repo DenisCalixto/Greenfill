@@ -11,7 +11,34 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <img class="portrait" src="/img/me.jpeg">
+        <form action="./saverefill" method="GET">
+            <table>
+                <tr><td>Beverages, beverage mixes</td><td><input name="category19" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Candy and snacks (no candy-wrapper)</td><td><input name="category6" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Candy and snacks (with candy-wrappers)</td><td><input name="category7" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Cheese</td><td><input name="category17" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Chocolate</td><td><input name="category8" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Cleaning products</td><td><input name="category2" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Cooking oil, vinegar</td><td><input name="category3" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Dried fruits, vegetables</td><td><input name="category5" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Fish</td><td><input name="category14" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Flour, sugar, spices, baking ingredients, baking mixes</td><td><input name="category10" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Fresh fruits, vegetables</td><td><input name="category4" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Jams, peanut butter, and other spreads</td><td><input name="category12" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Meat</td><td><input name="category13" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Milk</td><td><input name="category15" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Noodles, rice, beans</td><td><input name="category11" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Nuts, cereals, grains</td><td><input name="category9" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Pet food</td><td><input name="category21" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Soap, Shampoo</td><td><input name="category1" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Supplements</td><td><input name="category20" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Tea, coffee</td><td><input name="category18" type="number" min="0" max="100" value="0"></td></tr>
+                <tr><td>Yoghurt</td><td><input name="category16" type="number" min="0" max="100" value="0"></td></tr>
+            </table>
+            <input type="hidden" name="personId" value="2">
+        <br><br>
+        <input type="submit" value="Save Refills">
+        </form>
     </div>
     
     {{>footer}}
