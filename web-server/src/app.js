@@ -6,6 +6,8 @@ var routes = require('../routes/routes');
 var connection = require('../lib/db');
 var refill = require('../lib/refill');
 var company = require('../classes/company');
+var productCategory = require('../classes/productCategory');
+var bulkStrategy = require('../classes/bulkStrategy');
 
 const app = express()
 
@@ -84,6 +86,68 @@ app.get('/company/:id', (req, res) => {
                 title: 'Company',
                 name: 'Team Kilimanjaro',
                 company: JSON.stringify(companyObject)
+            })
+        }
+                            
+    });
+})
+
+app.get('/companyproductcategories/:idCompany', (req, res) => {
+
+    const query = "select cpc.ProductCategoryId, pc.name " +
+                  "from CompanyProductCategory cpc " + 
+                  "inner join ProductCategory pc on pc.ProductCategoryId = cpc.ProductCategoryId " +
+                  "where cpc.companyid = " + req.params.idCompany
+
+    connection.query(query,function(err, results, fields) { 
+        if (err) {
+            return res.send({
+                error: err
+            })
+        }
+        else {
+            let categories = []
+            for (var index = 0 ; index < results.length ; index++) {
+                let categoryObject = new productCategory.ProductCategory()
+                categoryObject.id = results[index].ProductCategoryId;
+                categoryObject.name = results[index].name;
+                categories.push(categoryObject);
+            }
+            res.render('companyproductcategories', {
+                title: 'Company Product Categories',
+                name: 'Team Kilimanjaro',
+                productCategories: JSON.stringify(categories)
+            })
+        }
+                            
+    });
+})
+
+app.get('/companybulkstrategies/:idCompany', (req, res) => {
+
+    const query = "select cpc.BulkStrategyId, pc.name " +
+                  "from companybulkstrategy cpc " + 
+                  "inner join BulkStrategy pc on pc.BulkStrategyId = cpc.BulkStrategyId " +
+                  "where cpc.companyid = " + req.params.idCompany
+                  
+    connection.query(query,function(err, results, fields) { 
+        if (err) {
+            return res.send({
+                error: err
+            })
+        }
+        else {
+            let strategies = []
+            for (var index = 0 ; index < results.length ; index++) {
+                let strategyObject = new bulkStrategy.BulkStrategy()
+                strategyObject.id = results[index].BulkStrategyId;
+                strategyObject.name = results[index].name;
+                strategies.push(strategyObject);
+            }
+            res.render('companybulkstrategies', {
+                title: 'Company Bulk Strategy',
+                name: 'Team Kilimanjaro',
+                bulkStrategies: JSON.stringify(strategies)
             })
         }
                             
