@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Company</title>
+    <link rel="icon" href="/img/weather.png">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <div class="main-content">
+        {{>header}}
+        <form action="/company/create" method="post" name="form1">
+            name:&nbsp;<input type="text" id="name" name="name" value="Denis Company" /><br>
+            website:&nbsp;<input type="text" name="website" value="www.deniscalixto.com" /><br>
+            city:&nbsp;<input type="text" name="city" value="Vancouver" /><br>
+            province:&nbsp;<input type="text" name="province" value="BC" /><br>
+            address:&nbsp;<input type="text" name="address" value="1255 Bidwell Street" /><br>
+            expiringItemsNote:&nbsp;<input type="text" name="expiringItemsNote" value="1" /><br>
+            provideReusableItemsNotes:&nbsp;<input type="text" name="provideReusableItemsNotes" value="1" /><br>
+            recentHistory:&nbsp;<input type="text" name="recentHistory" value="history of shame" /><br>
+            comments:&nbsp;<input type="text" name="comments" value="comments of fear" /><br>
+            loosePercentage:&nbsp;<input type="text" name="loosePercentage" value="100%" /><br>
+            discountExpiringItems:&nbsp;<input type="text" name="discountExpiringItems" value="1" /><br>
+            donateExpiringItems:&nbsp;<input type="text" name="donateExpiringItems" value="1" /><br>
+            throwOutExpiringItems:&nbsp;<input type="text" name="throwOutExpiringItems" value="1" /><br>
+            sellInBulk:&nbsp;<input type="text" name="sellInBulk" value="1" /><br>
+            byo:&nbsp;<input type="text" name="byo" value="Hell no!" /><br>
+            extraChargeSingleItem:&nbsp;<input type="text" name="extraChargeSingleItem" value="1" /><br>
+            provideReusableItems:&nbsp;<input type="text" name="provideReusableItems" value="1" /><br>
+            employeesUseSingleUseItems:&nbsp;<input type="text" name="employeesUseSingleUseItems" value="1" /><br>
+            employeesSingleUseItemsNotes:&nbsp;<input type="text" name="employeesSingleUseItemsNotes" value="1" /><br>
+            <br><br>
+            <input type="submit" value="Create Company">
+        </form>
+    </div>
+    
+    {{>footer}}
+</body>
+
+</html>

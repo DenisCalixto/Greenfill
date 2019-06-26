@@ -1,8 +1,10 @@
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
+const bodyParser = require('body-parser');
 
-var routes = require('../routes/routes');
+const router = express.Router();
+
 var connection = require('../lib/db');
 var refill = require('../lib/refill');
 var company = require('../classes/company');
@@ -15,6 +17,11 @@ const app = express()
 const publicDirectoryPath = path.join(__dirname, '../public')
 const viewsPath = path.join(__dirname, '../templates/views')
 const partialsPath = path.join(__dirname, '../templates/partials')
+
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
 
 // Setup handlebars engine and views location
 app.set('view engine', 'hbs')
@@ -45,7 +52,7 @@ app.get('/contact', (req, res) => {
     })
 })
 
-app.get('/company/:id', (req, res) => {
+app.get('/company/:id(\\d+)', (req, res) => {  // (\\d+) means an integer will be provided
 
     const query = "select name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, " +
                   "recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, " +
@@ -67,7 +74,7 @@ app.get('/company/:id', (req, res) => {
                 companyObject.city = results[index].city;
                 companyObject.province = results[index].province;
                 companyObject.address = results[index].address;
-                companyObject.expiringItemnsNote = results[index].expiringItemnsNote;
+                companyObject.expiringItemsNote = results[index].expiringItemsNote;
                 companyObject.provideReusableItemsNotes = results[index].provideReusableItemsNotes;
                 companyObject.recencompanyObjecttory = results[index].recencompanyObjecttory;
                 companyObject.comments = results[index].comments;
@@ -92,7 +99,7 @@ app.get('/company/:id', (req, res) => {
     });
 })
 
-app.get('/companyproductcategories/:idCompany', (req, res) => {
+app.get('/company/:idCompany(\\d+)/productcategories/', (req, res) => {
 
     const query = "select cpc.ProductCategoryId, pc.name " +
                   "from CompanyProductCategory cpc " + 
@@ -123,7 +130,7 @@ app.get('/companyproductcategories/:idCompany', (req, res) => {
     });
 })
 
-app.get('/companybulkstrategies/:idCompany', (req, res) => {
+app.get('/company/:idCompany(\\d+)/bulkstrategies', (req, res) => {
 
     const query = "select cpc.BulkStrategyId, pc.name " +
                   "from companybulkstrategy cpc " + 
@@ -152,6 +159,68 @@ app.get('/companybulkstrategies/:idCompany', (req, res) => {
         }
                             
     });
+})
+
+app.post('/company/create', (req, res) => {
+    
+    let name = req.body.name;
+    let website = req.body.website;
+    let city = req.body.city;
+    let province = req.body.province;
+    let address = req.body.address;
+    let expiringItemsNote = req.body.expiringItemsNote;
+    let provideReusableItemsNotes = req.body.provideReusableItemsNotes;
+    let recentHistory = req.body.recentHistory;
+    let comments = req.body.comments;
+    let loosePercentage = req.body.loosePercentage;
+    let discountExpiringItems = req.body.discountExpiringItems;
+    let donateExpiringItems = req.body.donateExpiringItems;
+    let throwOutExpiringItems = req.body.throwOutExpiringItems;
+    let sellInBulk = req.body.sellInBulk;
+    let byo = req.body.byo;
+    let extraChargeSingleItem = req.body.extraChargeSingleItem;
+    let provideReusableItems = req.body.provideReusableItems;
+    let employeesUseSingleUseItems = req.body.employeesUseSingleUseItems;
+    let employeesSingleUseItemsNotes = req.body.employeesSingleUseItemsNotes;
+
+    let query = "INSERT INTO Company (name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, " +
+                "recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, " +
+                "throwOutExpiringItems, sellInBulk, byo, extraChargeSingleItem, provideReusableItems, " +
+                "employeesUseSingleUseItems, employeesSingleUseItemsNotes) " +
+                "Values ('" + 
+                name + "','" + website + "','" + city + "','" + province + "','" + address + "'," + expiringItemsNote + "," + provideReusableItemsNotes + ",'" +
+                recentHistory + "','" + comments + "','" + loosePercentage + "'," + discountExpiringItems + "," + donateExpiringItems + "," +
+                throwOutExpiringItems + "," + sellInBulk + ",'" + byo + "'," + extraChargeSingleItem + "," + provideReusableItems + "," + 
+                employeesUseSingleUseItems + "," + employeesSingleUseItemsNotes + ")";
+    
+    connection.query(query, function(err, result) {
+            //if(err) throw err
+            if (err) {
+                return res.send({
+                    error: err
+                })
+            } else {
+                const companyId = result.insertId;
+
+                // if (category1Amount) {
+                //     let errItem = refill.saveItemRefill(refillId, 1, category1Amount);
+                //     if (errItem) {
+                //         return res.send({
+                //             error: errItem
+                //         })
+                //     }
+                // }
+
+                res.redirect('/company/create');
+            }
+        })
+})
+
+app.get('/company/create/', (req, res) => {
+    res.render('newcompany', {
+        title: 'Register New Company',
+        name: 'Team Kilimanjaro'
+    })
 })
 
 app.get('/dashboard', (req, res) => {
@@ -184,7 +253,7 @@ app.get('/leaderboard', (req, res) => {
                 error: err
             })
         }
-        else {            
+        else {
             res.render('leaderboard', {
                 title: 'Leaderboard',
                 name: 'Team Kilimanjaro',
