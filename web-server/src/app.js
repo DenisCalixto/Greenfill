@@ -3,7 +3,9 @@ const express = require('express')
 const hbs = require('hbs')
 const bodyParser = require('body-parser');
 
-const router = express.Router();
+// Require controller modules.
+var companyController = require('../controllers/companyController');
+
 
 var connection = require('../lib/db');
 var refill = require('../lib/refill');
@@ -12,6 +14,7 @@ var productCategory = require('../classes/productCategory');
 var bulkStrategy = require('../classes/bulkStrategy');
 
 const app = express()
+const router = express.Router();
 
 // Define paths for Express config
 const publicDirectoryPath = path.join(__dirname, '../public')
@@ -201,6 +204,10 @@ app.post('/company/create', (req, res) => {
                 })
             } else {
                 const companyId = result.insertId;
+
+                for(var key in req.body) {
+                    console.log(req.body[key])
+                }
 
                 // if (category1Amount) {
                 //     let errItem = refill.saveItemRefill(refillId, 1, category1Amount);

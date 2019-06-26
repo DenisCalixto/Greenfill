@@ -13,9 +13,9 @@ const saveCompany = (company) => {
     // })
 }
 
-const saveCompanyBulkStrategies = (refillId, productCategoryId, quantity) => {
-    query = 'INSERT INTO `refillitem` (RefillId, ProductCategoryId, Quantity)' +
-            'Values (' + refillId + ',' + productCategoryId + ',' + quantity + ')';
+const saveCompanyBulkStrategy = (companyId, bulkStrategyId) => {
+    query = 'INSERT INTO CompanyBulkStrategy (companyId, bulkStrategyId)' +
+            'Values (' + companyId + ',' + bulkStrategyId + ')';
     connection.query(query, function(err, result) {
         if (err) {
             return err
@@ -23,9 +23,9 @@ const saveCompanyBulkStrategies = (refillId, productCategoryId, quantity) => {
     })
 }
 
-const saveCompanyProductCategories = (refillId, productCategoryId, quantity) => {
-    query = 'INSERT INTO `refillitem` (RefillId, ProductCategoryId, Quantity)' +
-            'Values (' + refillId + ',' + productCategoryId + ',' + quantity + ')';
+const saveCompanyProductCategory = (companyId, productCategoryId) => {
+    query = 'INSERT INTO CompanyProductCategory (companyId, productCategoryId)' +
+            'Values (' + companyId + ',' + productCategoryId + ')';
     connection.query(query, function(err, result) {
         if (err) {
             return err
@@ -36,6 +36,6 @@ const saveCompanyProductCategories = (refillId, productCategoryId, quantity) => 
 
 module.exports = {
     saveCompany, 
-    saveCompanyBulkStrategies, 
-    saveCompanyProductCategories
+    saveCompanyBulkStrategy, 
+    saveCompanyProductCategory
 }
