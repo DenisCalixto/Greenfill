@@ -186,41 +186,70 @@ app.post('/company/create', (req, res) => {
     let employeesUseSingleUseItems = req.body.employeesUseSingleUseItems;
     let employeesSingleUseItemsNotes = req.body.employeesSingleUseItemsNotes;
 
-    let query = "INSERT INTO Company (name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, " +
-                "recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, " +
-                "throwOutExpiringItems, sellInBulk, byo, extraChargeSingleItem, provideReusableItems, " +
-                "employeesUseSingleUseItems, employeesSingleUseItemsNotes) " +
-                "Values ('" + 
-                name + "','" + website + "','" + city + "','" + province + "','" + address + "'," + expiringItemsNote + "," + provideReusableItemsNotes + ",'" +
-                recentHistory + "','" + comments + "','" + loosePercentage + "'," + discountExpiringItems + "," + donateExpiringItems + "," +
-                throwOutExpiringItems + "," + sellInBulk + ",'" + byo + "'," + extraChargeSingleItem + "," + provideReusableItems + "," + 
-                employeesUseSingleUseItems + "," + employeesSingleUseItemsNotes + ")";
     
-    connection.query(query, function(err, result) {
-            //if(err) throw err
-            if (err) {
-                return res.send({
-                    error: err
-                })
-            } else {
-                const companyId = result.insertId;
+    connection.beginTransaction(function(err) {
+        if (err) { throw err; }
 
-                for(var key in req.body) {
-                    console.log(req.body[key])
-                }
+        const query = "INSERT INTO Company (name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, " +
+                        "recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, " +
+                        "throwOutExpiringItems, sellInBulk, byo, extraChargeSingleItem, provideReusableItems, " +
+                        "employeesUseSingleUseItems, employeesSingleUseItemsNotes) " +
+                        "Values ('" + 
+                        name + "','" + website + "','" + city + "','" + province + "','" + address + "','" + expiringItemsNote + "','" + 
+                        provideReusableItemsNotes + "','" + recentHistory + "','" + comments + "','" + loosePercentage + "'," + 
+                        discountExpiringItems + "," + donateExpiringItems + "," + throwOutExpiringItems + "," + sellInBulk + ",'" + 
+                        byo + "'," + extraChargeSingleItem + "," + provideReusableItems + "," + 
+                        employeesUseSingleUseItems + ",'" + employeesSingleUseItemsNotes + "')";
 
-                // if (category1Amount) {
-                //     let errItem = refill.saveItemRefill(refillId, 1, category1Amount);
-                //     if (errItem) {
-                //         return res.send({
-                //             error: errItem
-                //         })
-                //     }
-                // }
-
-                res.redirect('/company/create');
+        // console.log(query)
+        
+        connection.query(query, function (error, result) {
+            if (error) {
+                return connection.rollback(function() {
+                    throw error;
+                });
             }
-        })
+
+            const companyId = result.insertId;
+            // console.log("companyId: " + companyId)
+
+            for(var key in req.body) {
+
+                if (key.indexOf("category") != -1) {
+
+                    // console.log(key  + ": " + req.body[key] + " - " + key.indexOf("category"))
+
+                    if (parseInt(req.body[key]) == 1) {
+    
+                        const productCategoryId = parseInt(key.replace('category',''));
+                        const queryCategory = `INSERT INTO CompanyProductCategory (CompanyId, ProductCategoryId) Values (${companyId}, ${productCategoryId})`;
+
+                        // console.log(queryCategory)
+                    
+                        connection.query(queryCategory, function(err) {
+                            if (err) {
+                                return connection.rollback(function() {
+                                    throw err;
+                                });
+                            }
+                        })
+                    }
+                }
+            }
+
+            connection.commit(function(err) {
+                if (err) { 
+                    connection.rollback(function() {
+                        throw err;
+                    });
+                }
+                console.log('Transaction Complete.');
+            });
+            
+            res.redirect('/company/create');
+
+        });
+    });
 })
 
 app.get('/company/create/', (req, res) => {

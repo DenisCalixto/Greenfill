@@ -18,7 +18,7 @@ const saveCompanyBulkStrategy = (companyId, bulkStrategyId) => {
             'Values (' + companyId + ',' + bulkStrategyId + ')';
     connection.query(query, function(err, result) {
         if (err) {
-            return err
+            throw err
         }
     })
 }
@@ -28,7 +28,7 @@ const saveCompanyProductCategory = (companyId, productCategoryId) => {
             'Values (' + companyId + ',' + productCategoryId + ')';
     connection.query(query, function(err, result) {
         if (err) {
-            return err
+            throw err
         }
     })
 }
