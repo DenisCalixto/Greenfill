@@ -4,14 +4,13 @@ const hbs = require('hbs')
 const bodyParser = require('body-parser');
 
 // Require controller modules.
-var companyController = require('../controllers/companyController');
+const companyController = require('../controllers/companyController');
 
-
-var connection = require('../lib/db');
-var refill = require('../lib/refill');
-var company = require('../classes/company');
-var productCategory = require('../classes/productCategory');
-var bulkStrategy = require('../classes/bulkStrategy');
+const connection = require('../lib/db');
+const refill = require('../lib/refill');
+const company = require('../classes/company');
+const productCategory = require('../classes/productCategory');
+const bulkStrategy = require('../classes/bulkStrategy');
 
 const app = express()
 const router = express.Router();
@@ -227,6 +226,30 @@ app.post('/company/create', (req, res) => {
                         // console.log(queryCategory)
                     
                         connection.query(queryCategory, function(err) {
+                            if (err) {
+                                return connection.rollback(function() {
+                                    throw err;
+                                });
+                            }
+                        })
+                    }
+                }
+            }
+
+            for(var key in req.body) {
+
+                if (key.indexOf("strategy") != -1) {
+
+                    // console.log(key  + ": " + req.body[key] + " - " + key.indexOf("category"))
+
+                    if (parseInt(req.body[key]) == 1) {
+    
+                        const bulkStrategyId = parseInt(key.replace('strategy',''));
+                        const queryStrategy = `INSERT INTO CompanyBulkStrategy (CompanyId, BulkStrategyId) Values (${companyId}, ${bulkStrategyId})`;
+
+                        // console.log(queryStrategy)
+                    
+                        connection.query(queryStrategy, function(err) {
                             if (err) {
                                 return connection.rollback(function() {
                                     throw err;
