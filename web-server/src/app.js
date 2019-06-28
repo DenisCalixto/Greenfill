@@ -1,17 +1,29 @@
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
+const bodyParser = require('body-parser');
 
-var routes = require('../routes/routes');
-var connection = require('../lib/db');
-var refill = require('../lib/refill');
+// Require controller modules.
+const companyController = require('../controllers/companyController');
+
+const connection = require('../lib/db');
+const refill = require('../lib/refill');
+const company = require('../classes/company');
+const productCategory = require('../classes/productCategory');
+const bulkStrategy = require('../classes/bulkStrategy');
 
 const app = express()
+const router = express.Router();
 
 // Define paths for Express config
 const publicDirectoryPath = path.join(__dirname, '../public')
 const viewsPath = path.join(__dirname, '../templates/views')
 const partialsPath = path.join(__dirname, '../templates/partials')
+
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
 
 // Setup handlebars engine and views location
 app.set('view engine', 'hbs')
@@ -38,6 +50,234 @@ app.get('/about', (req, res) => {
 app.get('/contact', (req, res) => {
     res.render('contact', {
         title: 'Get in Touch',
+        name: 'Team Kilimanjaro'
+    })
+})
+
+app.get('/company/:id(\\d+)', (req, res) => {  // (\\d+) means an integer will be provided
+
+    const query = "select name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, " +
+                  "recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, " +
+                  "throwOutExpiringItems, sellInBulk, byo, extraChargeSingleItem, provideReusableItems, " +
+                  "employeesUseSingleUseItems, employeesSingleUseItemsNotes " +
+                  "from company " +
+                  "where companyid = " + req.params.id
+    connection.query(query,function(err, results, fields) { 
+        if (err) {
+            return res.send({
+                error: err
+            })
+        }
+        else {
+            let companyObject = new company.Company()
+            for (var index = 0 ; index < results.length ; index++) {
+                companyObject.name = results[index].name;
+                companyObject.website = results[index].website;
+                companyObject.city = results[index].city;
+                companyObject.province = results[index].province;
+                companyObject.address = results[index].address;
+                companyObject.expiringItemsNote = results[index].expiringItemsNote;
+                companyObject.provideReusableItemsNotes = results[index].provideReusableItemsNotes;
+                companyObject.recencompanyObjecttory = results[index].recencompanyObjecttory;
+                companyObject.comments = results[index].comments;
+                companyObject.loosePercentage = results[index].loosePercentage;
+                companyObject.discountExpiringItems = results[index].discountExpiringItems;
+                companyObject.donateExpiringItems = results[index].donateExpiringItems;
+                companyObject.throwOutExpiringItems = results[index].throwOutExpiringItems;
+                companyObject.sellInBulk = results[index].sellInBulk;
+                companyObject.byo = results[index].byo;
+                companyObject.extraChargeSingleItem = results[index].extraChargeSingleItem;
+                companyObject.provideReusableItems = results[index].provideReusableItems;
+                companyObject.employeesUseSingleUseItems = results[index].employeesUseSingleUseItems;
+                companyObject.employeesSingleUseItemsNotes = results[index].employeesSingleUseItemsNotes;
+            }
+            res.render('company', {
+                title: 'Company',
+                name: 'Team Kilimanjaro',
+                company: JSON.stringify(companyObject)
+            })
+        }
+                            
+    });
+})
+
+app.get('/company/:idCompany(\\d+)/productcategories/', (req, res) => {
+
+    const query = "select cpc.ProductCategoryId, pc.name " +
+                  "from CompanyProductCategory cpc " + 
+                  "inner join ProductCategory pc on pc.ProductCategoryId = cpc.ProductCategoryId " +
+                  "where cpc.companyid = " + req.params.idCompany
+
+    connection.query(query,function(err, results, fields) { 
+        if (err) {
+            return res.send({
+                error: err
+            })
+        }
+        else {
+            let categories = []
+            for (var index = 0 ; index < results.length ; index++) {
+                let categoryObject = new productCategory.ProductCategory()
+                categoryObject.id = results[index].ProductCategoryId;
+                categoryObject.name = results[index].name;
+                categories.push(categoryObject);
+            }
+            res.render('companyproductcategories', {
+                title: 'Company Product Categories',
+                name: 'Team Kilimanjaro',
+                productCategories: JSON.stringify(categories)
+            })
+        }
+                            
+    });
+})
+
+app.get('/company/:idCompany(\\d+)/bulkstrategies', (req, res) => {
+
+    const query = "select cpc.BulkStrategyId, pc.name " +
+                  "from companybulkstrategy cpc " + 
+                  "inner join BulkStrategy pc on pc.BulkStrategyId = cpc.BulkStrategyId " +
+                  "where cpc.companyid = " + req.params.idCompany
+                  
+    connection.query(query,function(err, results, fields) { 
+        if (err) {
+            return res.send({
+                error: err
+            })
+        }
+        else {
+            let strategies = []
+            for (var index = 0 ; index < results.length ; index++) {
+                let strategyObject = new bulkStrategy.BulkStrategy()
+                strategyObject.id = results[index].BulkStrategyId;
+                strategyObject.name = results[index].name;
+                strategies.push(strategyObject);
+            }
+            res.render('companybulkstrategies', {
+                title: 'Company Bulk Strategy',
+                name: 'Team Kilimanjaro',
+                bulkStrategies: JSON.stringify(strategies)
+            })
+        }
+                            
+    });
+})
+
+app.post('/company/create', (req, res) => {
+    
+    let name = req.body.name;
+    let website = req.body.website;
+    let city = req.body.city;
+    let province = req.body.province;
+    let address = req.body.address;
+    let expiringItemsNote = req.body.expiringItemsNote;
+    let provideReusableItemsNotes = req.body.provideReusableItemsNotes;
+    let recentHistory = req.body.recentHistory;
+    let comments = req.body.comments;
+    let loosePercentage = req.body.loosePercentage;
+    let discountExpiringItems = req.body.discountExpiringItems;
+    let donateExpiringItems = req.body.donateExpiringItems;
+    let throwOutExpiringItems = req.body.throwOutExpiringItems;
+    let sellInBulk = req.body.sellInBulk;
+    let byo = req.body.byo;
+    let extraChargeSingleItem = req.body.extraChargeSingleItem;
+    let provideReusableItems = req.body.provideReusableItems;
+    let employeesUseSingleUseItems = req.body.employeesUseSingleUseItems;
+    let employeesSingleUseItemsNotes = req.body.employeesSingleUseItemsNotes;
+
+    
+    connection.beginTransaction(function(err) {
+        if (err) { throw err; }
+
+        const query = "INSERT INTO Company (name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, " +
+                        "recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, " +
+                        "throwOutExpiringItems, sellInBulk, byo, extraChargeSingleItem, provideReusableItems, " +
+                        "employeesUseSingleUseItems, employeesSingleUseItemsNotes) " +
+                        "Values ('" + 
+                        name + "','" + website + "','" + city + "','" + province + "','" + address + "','" + expiringItemsNote + "','" + 
+                        provideReusableItemsNotes + "','" + recentHistory + "','" + comments + "','" + loosePercentage + "'," + 
+                        discountExpiringItems + "," + donateExpiringItems + "," + throwOutExpiringItems + "," + sellInBulk + ",'" + 
+                        byo + "'," + extraChargeSingleItem + "," + provideReusableItems + "," + 
+                        employeesUseSingleUseItems + ",'" + employeesSingleUseItemsNotes + "')";
+
+        // console.log(query)
+        
+        connection.query(query, function (error, result) {
+            if (error) {
+                return connection.rollback(function() {
+                    throw error;
+                });
+            }
+
+            const companyId = result.insertId;
+            // console.log("companyId: " + companyId)
+
+            for(var key in req.body) {
+
+                if (key.indexOf("category") != -1) {
+
+                    // console.log(key  + ": " + req.body[key] + " - " + key.indexOf("category"))
+
+                    if (parseInt(req.body[key]) == 1) {
+    
+                        const productCategoryId = parseInt(key.replace('category',''));
+                        const queryCategory = `INSERT INTO CompanyProductCategory (CompanyId, ProductCategoryId) Values (${companyId}, ${productCategoryId})`;
+
+                        // console.log(queryCategory)
+                    
+                        connection.query(queryCategory, function(err) {
+                            if (err) {
+                                return connection.rollback(function() {
+                                    throw err;
+                                });
+                            }
+                        })
+                    }
+                }
+            }
+
+            for(var key in req.body) {
+
+                if (key.indexOf("strategy") != -1) {
+
+                    // console.log(key  + ": " + req.body[key] + " - " + key.indexOf("category"))
+
+                    if (parseInt(req.body[key]) == 1) {
+    
+                        const bulkStrategyId = parseInt(key.replace('strategy',''));
+                        const queryStrategy = `INSERT INTO CompanyBulkStrategy (CompanyId, BulkStrategyId) Values (${companyId}, ${bulkStrategyId})`;
+
+                        // console.log(queryStrategy)
+                    
+                        connection.query(queryStrategy, function(err) {
+                            if (err) {
+                                return connection.rollback(function() {
+                                    throw err;
+                                });
+                            }
+                        })
+                    }
+                }
+            }
+
+            connection.commit(function(err) {
+                if (err) { 
+                    connection.rollback(function() {
+                        throw err;
+                    });
+                }
+                console.log('Transaction Complete.');
+            });
+            
+            res.redirect('/company/create');
+
+        });
+    });
+})
+
+app.get('/company/create/', (req, res) => {
+    res.render('newcompany', {
+        title: 'Register New Company',
         name: 'Team Kilimanjaro'
     })
 })
@@ -72,7 +312,7 @@ app.get('/leaderboard', (req, res) => {
                 error: err
             })
         }
-        else {            
+        else {
             res.render('leaderboard', {
                 title: 'Leaderboard',
                 name: 'Team Kilimanjaro',

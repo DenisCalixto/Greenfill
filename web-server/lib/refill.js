@@ -7,7 +7,7 @@ const saveItemRefill = (refillId, productCategoryId, quantity) => {
             'Values (' + refillId + ',' + productCategoryId + ',' + quantity + ')';
     connection.query(query, function(err, result) {
         if (err) {
-            return err
+            throw err
         }
     })
 }

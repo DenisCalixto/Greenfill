@@ -1,16 +1,17 @@
 const Company = class Company {
 
-    constructor(name, website, city, province, address, expiringItemnsNote, provideReusableItemsNotes, 
+    constructor(id, name, website, city, province, address, expiringItemsNote, provideReusableItemsNotes, 
                 recentHistory, comments, loosePercentage, discountExpiringItems, donateExpiringItems, 
                 throwOutExpiringItems, sellInBulk, byo, extraChargeSingleItem, provideReusableItems, 
                 employeesUseSingleUseItems, employeesSingleUseItemsNotes) {
 
+        this.id = id;
         this.name = name;
         this.website = website;
         this.city = city;
         this.province = province;
         this.address = address;
-        this.expiringItemnsNote = expiringItemnsNote;
+        this.expiringItemsNote = expiringItemsNote;
         this.provideReusableItemsNotes = provideReusableItemsNotes;
         this.recentHistory = recentHistory;
         this.comments = comments;
