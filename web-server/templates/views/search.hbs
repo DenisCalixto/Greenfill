@@ -11,7 +11,12 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <img class="portrait" src="/img/me.jpeg">
+        <form action="/search" method="post" name="form1">
+            Search:&nbsp;<input type="text" id="search" name="search" value="" />
+            <br><br>
+            <input type="submit" value="Search">
+        </form>
+        {{companies}}
     </div>
     
     {{>footer}}
