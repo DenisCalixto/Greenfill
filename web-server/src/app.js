@@ -419,9 +419,43 @@ app.get('/saverefill', (req, res) => {
     }
 })
 
+app.post('/search', (req, res) => {
+
+    const query = "select companyId, name " +
+                    "from company " +
+                    "where name like '%" + req.body.search + "%' " + 
+                    "or exists (select 1 from CompanyProductCategory cpc " + 
+                    "           inner join ProductCategory pc on cpc.ProductCategoryId = pc.ProductCategoryId " + 
+                    "           where company.CompanyId = cpc.CompanyId " + 
+                    "           and pc.name like '%" + req.body.search + "%')"
+
+    connection.query(query,function(err, results, fields) { 
+        if (err) {
+            return res.send({
+                error: err
+            })
+        }
+        else {
+            let companies = []
+            for (var index = 0 ; index < results.length ; index++) {
+                let companyObject = new company.Company()
+                companyObject.id = results[index].id;
+                companyObject.name = results[index].name;
+                companies.push(companyObject);
+            }
+            
+            res.render('search', {
+                title: 'search',
+                name: 'Team Kilimanjaro',
+                companies: JSON.stringify(companies)
+            })
+        }                            
+    });
+})
+
 app.get('/search', (req, res) => {
     res.render('search', {
-        title: 'Search',
+        title: 'search',
         name: 'Team Kilimanjaro'
     })
 })
