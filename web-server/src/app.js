@@ -426,7 +426,7 @@ app.get('/saverefill_simulation', (req, res) => {
     connection.beginTransaction(function(err) {
         if (err) { throw err; }
 
-        let query = `INSERT INTO refill (PersonId, CompanyId) Values ( ${personId} NULL)`
+        let query = `INSERT INTO refill (PersonId, CompanyId) Values (${personId}, NULL)`
         
         connection.query(query, function(err, result) {
             
@@ -435,33 +435,39 @@ app.get('/saverefill_simulation', (req, res) => {
                     throw err;
                 });
             }
-            
-            const refillId = result.insertId;
-            
-            let quantity = 1;
+            else 
+            {            
+                const refillId = result.insertId;
+                
+                let quantity = 1;
 
-            for (let categoryId = 1; categoryId < 15; categoryId++)
-            {
-                let queryRefillItem = 'INSERT INTO `refillitem` (RefillId, ProductCategoryId, Quantity)' +
-                                        `Values (${refillId}, ${categoryId}, ${quantity})`
+                for (let categoryId = 1; categoryId < 15; categoryId++)
+                {
+                    let queryRefillItem = 'INSERT INTO `refillitem` (RefillId, ProductCategoryId, Quantity)' +
+                                            `Values (${refillId}, ${categoryId}, ${quantity})`
 
-                connection.query(queryRefillItem, function(err) {
+                    connection.query(queryRefillItem, function(err) {
+                        if (err) { 
+                            connection.rollback(function() {
+                                throw err;
+                            });
+                        }
+                    })
+
+                    quantity = quantity + 2
+                }
+
+                connection.commit(function(err) {
                     if (err) { 
                         connection.rollback(function() {
                             throw err;
                         });
                     }
-                })
-            }
+                    console.log('Transaction Complete.');
+                    res.send("Refill saved!")
+                });
 
-            connection.commit(function(err) {
-                if (err) { 
-                    connection.rollback(function() {
-                        throw err;
-                    });
-                }
-                console.log('Transaction Complete.');
-            });
+            }
         })
     });
 })
