@@ -462,6 +462,59 @@ app.get('/saverefill', (req, res) => {
     }
 })
 
+app.get('/saverefill_simulation', (req, res) => {
+
+    let personId = req.query.personId;
+    
+    connection.beginTransaction(function(err) {
+        if (err) { throw err; }
+
+        let query = `INSERT INTO refill (PersonId, CompanyId) Values (${personId}, NULL)`
+        
+        connection.query(query, function(err, result) {
+            
+            if (err) { 
+                connection.rollback(function() {
+                    throw err;
+                });
+            }
+            else 
+            {            
+                const refillId = result.insertId;
+                
+                let quantity = 1;
+
+                for (let categoryId = 1; categoryId < 15; categoryId++)
+                {
+                    let queryRefillItem = 'INSERT INTO `refillitem` (RefillId, ProductCategoryId, Quantity)' +
+                                            `Values (${refillId}, ${categoryId}, ${quantity})`
+
+                    connection.query(queryRefillItem, function(err) {
+                        if (err) { 
+                            connection.rollback(function() {
+                                throw err;
+                            });
+                        }
+                    })
+
+                    quantity = quantity + 2
+                }
+
+                connection.commit(function(err) {
+                    if (err) { 
+                        connection.rollback(function() {
+                            throw err;
+                        });
+                    }
+                    console.log('Transaction Complete.');
+                    res.send("Refill saved!")
+                });
+
+            }
+        })
+    });
+})
+
 app.post('/search', (req, res) => {
 
     const query = "select companyId, name " +
