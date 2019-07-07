@@ -62,105 +62,135 @@ app.get('/company/:id(\\d+)', (req, res) => {  // (\\d+) means an integer will b
                   "employeesUseSingleUseItems, employeesSingleUseItemsNotes " +
                   "from company " +
                   "where companyid = " + req.params.id
-    connection.query(query,function(err, results, fields) { 
-        if (err) {
-            return res.send({
-                error: err
-            })
-        }
-        else {
-            let companyObject = new company.Company()
-            for (var index = 0 ; index < results.length ; index++) {
-                companyObject.name = results[index].name;
-                companyObject.website = results[index].website;
-                companyObject.city = results[index].city;
-                companyObject.province = results[index].province;
-                companyObject.address = results[index].address;
-                companyObject.expiringItemsNote = results[index].expiringItemsNote;
-                companyObject.provideReusableItemsNotes = results[index].provideReusableItemsNotes;
-                companyObject.recencompanyObjecttory = results[index].recencompanyObjecttory;
-                companyObject.comments = results[index].comments;
-                companyObject.loosePercentage = results[index].loosePercentage;
-                companyObject.discountExpiringItems = results[index].discountExpiringItems;
-                companyObject.donateExpiringItems = results[index].donateExpiringItems;
-                companyObject.throwOutExpiringItems = results[index].throwOutExpiringItems;
-                companyObject.sellInBulk = results[index].sellInBulk;
-                companyObject.byo = results[index].byo;
-                companyObject.extraChargeSingleItem = results[index].extraChargeSingleItem;
-                companyObject.provideReusableItems = results[index].provideReusableItems;
-                companyObject.employeesUseSingleUseItems = results[index].employeesUseSingleUseItems;
-                companyObject.employeesSingleUseItemsNotes = results[index].employeesSingleUseItemsNotes;
-            }
-            res.render('company', {
-                title: 'Company',
-                name: 'Team Kilimanjaro',
-                company: JSON.stringify(companyObject)
-            })
-        }
-                            
-    });
+
+    // connection.connect(function(error){
+    //     if(error) {
+    //         throw error;
+    //     }
+    //     else
+    //     {
+            connection.query(query,function(error, results, fields) { 
+                if (error) {
+                    throw error;
+                }
+                else {
+                    let companyObject = new company.Company()
+                    for (var index = 0 ; index < results.length ; index++) {
+                        companyObject.name = results[index].name;
+                        companyObject.website = results[index].website;
+                        companyObject.city = results[index].city;
+                        companyObject.province = results[index].province;
+                        companyObject.address = results[index].address;
+                        companyObject.expiringItemsNote = results[index].expiringItemsNote;
+                        companyObject.provideReusableItemsNotes = results[index].provideReusableItemsNotes;
+                        companyObject.recencompanyObjecttory = results[index].recencompanyObjecttory;
+                        companyObject.comments = results[index].comments;
+                        companyObject.loosePercentage = results[index].loosePercentage;
+                        companyObject.discountExpiringItems = results[index].discountExpiringItems;
+                        companyObject.donateExpiringItems = results[index].donateExpiringItems;
+                        companyObject.throwOutExpiringItems = results[index].throwOutExpiringItems;
+                        companyObject.sellInBulk = results[index].sellInBulk;
+                        companyObject.byo = results[index].byo;
+                        companyObject.extraChargeSingleItem = results[index].extraChargeSingleItem;
+                        companyObject.provideReusableItems = results[index].provideReusableItems;
+                        companyObject.employeesUseSingleUseItems = results[index].employeesUseSingleUseItems;
+                        companyObject.employeesSingleUseItemsNotes = results[index].employeesSingleUseItemsNotes;
+                    }
+                    res.render('company', {
+                        title: 'Company',
+                        name: 'Team Kilimanjaro',
+                        company: JSON.stringify(companyObject)
+                    })
+                }
+            });
+    //     }
+    // });
 })
 
 app.get('/company/:idCompany(\\d+)/productcategories/', (req, res) => {
 
     const query = "select cpc.ProductCategoryId, pc.name " +
-                  "from CompanyProductCategory cpc " + 
-                  "inner join ProductCategory pc on pc.ProductCategoryId = cpc.ProductCategoryId " +
+                  "from companyproductcategory cpc " + 
+                  "inner join productcategory pc on pc.ProductCategoryId = cpc.ProductCategoryId " +
                   "where cpc.companyid = " + req.params.idCompany
 
-    connection.query(query,function(err, results, fields) { 
-        if (err) {
-            return res.send({
-                error: err
-            })
-        }
-        else {
-            let categories = []
-            for (var index = 0 ; index < results.length ; index++) {
-                let categoryObject = new productCategory.ProductCategory()
-                categoryObject.id = results[index].ProductCategoryId;
-                categoryObject.name = results[index].name;
-                categories.push(categoryObject);
-            }
-            res.render('companyproductcategories', {
-                title: 'Company Product Categories',
-                name: 'Team Kilimanjaro',
-                productCategories: JSON.stringify(categories)
-            })
-        }
-                            
-    });
+    // connection.connect(function(error){
+    //     if(error) {
+    //         throw error;
+    //     }
+    //     else
+    //     {
+            connection.query(query,function(error, results, fields) { 
+                if (error) {
+                    throw error;
+                }
+                else {
+                    let categories = []
+                    for (var index = 0 ; index < results.length ; index++) {
+                        let categoryObject = new productCategory.ProductCategory()
+                        categoryObject.id = results[index].ProductCategoryId;
+                        categoryObject.name = results[index].name;
+                        categories.push(categoryObject);
+                    }
+                    // connection.end(function(error){
+                    //     if(error) {
+                    //         throw error;
+                    //     }
+                    //     else {
+                            res.render('companyproductcategories', {
+                                title: 'Company Product Categories',
+                                name: 'Team Kilimanjaro',
+                                productCategories: JSON.stringify(categories)
+                            })
+                    //     }
+                    // });
+                }
+            });
+    //     }
+    // });
 })
 
 app.get('/company/:idCompany(\\d+)/bulkstrategies', (req, res) => {
 
     const query = "select cpc.BulkStrategyId, pc.name " +
                   "from companybulkstrategy cpc " + 
-                  "inner join BulkStrategy pc on pc.BulkStrategyId = cpc.BulkStrategyId " +
+                  "inner join bulkstrategy pc on pc.BulkStrategyId = cpc.BulkStrategyId " +
                   "where cpc.companyid = " + req.params.idCompany
-                  
-    connection.query(query,function(err, results, fields) { 
-        if (err) {
-            return res.send({
-                error: err
-            })
-        }
-        else {
-            let strategies = []
-            for (var index = 0 ; index < results.length ; index++) {
-                let strategyObject = new bulkStrategy.BulkStrategy()
-                strategyObject.id = results[index].BulkStrategyId;
-                strategyObject.name = results[index].name;
-                strategies.push(strategyObject);
-            }
-            res.render('companybulkstrategies', {
-                title: 'Company Bulk Strategy',
-                name: 'Team Kilimanjaro',
-                bulkStrategies: JSON.stringify(strategies)
-            })
-        }
-                            
-    });
+
+    // connection.connect(function(error){
+    //     if(error) {
+    //         throw error;
+    //     }
+    //     else
+    //     {
+            connection.query(query,function(error, results, fields) { 
+                if (error) {
+                    throw error;
+                }
+                else {
+                    let strategies = []
+                    for (var index = 0 ; index < results.length ; index++) {
+                        let strategyObject = new bulkStrategy.BulkStrategy()
+                        strategyObject.id = results[index].BulkStrategyId;
+                        strategyObject.name = results[index].name;
+                        strategies.push(strategyObject);
+                    }
+                    // connection.end(function(error){
+                    //     if(error) {
+                    //         throw error;
+                    //     }
+                    //     else {
+                            res.render('companybulkstrategies', {
+                                title: 'Company Bulk Strategy',
+                                name: 'Team Kilimanjaro',
+                                bulkStrategies: JSON.stringify(strategies)
+                            })
+                    //     }
+                    // });
+                }
+            });
+    //     }
+    // });
 })
 
 app.post('/company/create', (req, res) => {
@@ -306,27 +336,33 @@ app.get('/leaderboard', (req, res) => {
                   "group by person.name " +
                   "order by sum(refillitem.quantity) desc " +
                   "limit 5 "
-    connection.query(query,function(err, results, fields) { 
-        if (err) {
-            return res.send({
-                error: err
-            })
-        }
-        else {
-            res.render('leaderboard', {
-                title: 'Leaderboard',
-                name: 'Team Kilimanjaro',
-                leaders: JSON.stringify(results),
-                people: [
-                    "Yehuda Katz",
-                    "Alan Johnson",
-                    "Charles Jolley"
-                  ]
-            })
-        }
-                            
-    });
-    
+
+    // connection.connect(function(error){
+    //     if(error) {
+    //         throw error;
+    //     }
+    //     else {
+            connection.query(query,function(error, results) { 
+                if (error) {
+                    throw error;
+                }
+                else {
+                    // connection.end(function(error){
+                    //     if(error) {
+                    //         throw error;
+                    //     }
+                    //     else {
+                            res.render('leaderboard', {
+                                title: 'Leaderboard',
+                                name: 'Team Kilimanjaro',
+                                leaders: JSON.stringify(results)
+                            })
+                    //     }
+                    // });
+                }
+            });
+    //     }
+    // });
 });
 
 app.get('/refill', (req, res) => {
@@ -422,89 +458,116 @@ app.get('/saverefill', (req, res) => {
 app.get('/saverefill_simulation', (req, res) => {
 
     let personId = req.query.personId;
-    
-    connection.beginTransaction(function(err) {
-        if (err) { throw err; }
 
-        let query = `INSERT INTO refill (PersonId, CompanyId) Values (${personId}, NULL)`
-        
-        connection.query(query, function(err, result) {
-            
-            if (err) { 
-                connection.rollback(function() {
-                    throw err;
-                });
-            }
-            else 
-            {            
-                const refillId = result.insertId;
+    if (!req.query.personId)
+    {
+        res.send({ error: "No personId informed in the querystring" })
+    }
+    else {
+    // connection.connect(function(error){
+    //     if(error) {
+    //         throw error;
+    //     }
+    //     else {
+            connection.beginTransaction(function(err) {
+                if (err) { throw err; }
+
+                let query = `INSERT INTO refill (PersonId, CompanyId) Values (${personId}, NULL)`
                 
-                let quantity = 1;
-
-                for (let categoryId = 1; categoryId < 15; categoryId++)
-                {
-                    let queryRefillItem = 'INSERT INTO `refillitem` (RefillId, ProductCategoryId, Quantity)' +
-                                            `Values (${refillId}, ${categoryId}, ${quantity})`
-
-                    connection.query(queryRefillItem, function(err) {
-                        if (err) { 
-                            connection.rollback(function() {
-                                throw err;
-                            });
-                        }
-                    })
-
-                    quantity = quantity + 2
-                }
-
-                connection.commit(function(err) {
+                connection.query(query, function(err, result) {
+                    
                     if (err) { 
                         connection.rollback(function() {
                             throw err;
                         });
                     }
-                    console.log('Transaction Complete.');
-                    res.send("Refill saved!")
-                });
+                    else 
+                    {            
+                        const refillId = result.insertId;
+                        
+                        let quantity = 1;
 
-            }
-        })
-    });
-})
+                        for (let categoryId = 1; categoryId < 15; categoryId++)
+                        {
+                            let queryRefillItem = 'INSERT INTO refillitem (RefillId, ProductCategoryId, Quantity)' +
+                                                    `Values (${refillId}, ${categoryId}, ${quantity})`
+
+                            connection.query(queryRefillItem, function(err) {
+                                if (err) { 
+                                    connection.rollback(function() {
+                                        throw err;
+                                    });
+                                }
+                            })
+
+                            quantity = quantity + 2
+                        }
+
+                        connection.commit(function(err) {
+                            if (err) { 
+                                connection.rollback(function() {
+                                    throw err;
+                                });
+                            }
+                            // connection.end(function(error){
+                            //     if(error) {
+                            //         throw error;
+                            //     }
+                            //     else {
+                                    console.log('Transaction Complete.');
+                                    res.send("Refill saved!")
+                            //     }
+                            // });
+                        });
+
+                    }
+                })
+            });
+    //     }
+    // });        
+    }
+});
 
 app.post('/search', (req, res) => {
 
     const query = "select companyId, name " +
                     "from company " +
                     "where name like '%" + req.body.search + "%' " + 
-                    "or exists (select 1 from CompanyProductCategory cpc " + 
-                    "           inner join ProductCategory pc on cpc.ProductCategoryId = pc.ProductCategoryId " + 
+                    "or exists (select 1 from companyproductcategory cpc " + 
+                    "           inner join productcategory pc on cpc.ProductCategoryId = pc.ProductCategoryId " + 
                     "           where company.CompanyId = cpc.CompanyId " + 
                     "           and pc.name like '%" + req.body.search + "%')"
 
-    connection.query(query,function(err, results, fields) { 
-        if (err) {
-            return res.send({
-                error: err
-            })
-        }
-        else {
-            let companies = []
-            for (var index = 0 ; index < results.length ; index++) {
-                let companyObject = new company.Company()
-                companyObject.id = results[index].id;
-                companyObject.name = results[index].name;
-                companies.push(companyObject);
-            }
-            
-            res.render('search', {
-                title: 'search',
-                name: 'Team Kilimanjaro',
-                companies: JSON.stringify(companies)
-            })
-        }                            
-    });
-})
+    // connection.connect(function(error){
+    //     if(error) {
+    //         throw error;
+    //     }
+    //     else {
+            connection.query(query,function(error, results, fields) { 
+                if (error) {
+                    res.send({ error: error })
+                }
+                else {
+                    let companies = []
+                    for (var index = 0 ; index < results.length ; index++) {
+                        let companyObject = new company.Company()
+                        companyObject.id = results[index].id;
+                        companyObject.name = results[index].name;
+                        companies.push(companyObject);
+                    }
+                    // connection.end(function(error){
+                    //     if(error) {
+                    //         throw error;
+                    //     }
+                    //     else {                 
+                            res.send({companies: JSON.stringify(companies)})
+                    //     }
+                    // });
+                }
+            });
+    //     }
+    // });
+});
 
 app.get('/search', (req, res) => {
     res.render('search', {

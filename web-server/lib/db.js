@@ -7,14 +7,14 @@ let connection = mysql.createConnection({
     database:'greenfill'
 });
 
-connection.connect(function(error){
-    if(!!error) {
-        console.log(error);
-    }
-    else {
-        console.log('Connected!:)');
-    }
-});
+// connection.connect(function(error){
+//     if(!!error) {
+//         console.log(error);
+//     }
+//     else {
+//         console.log('Connected!:)');
+//     }
+// });
 
 // connection.end(function(error){
 //     if(!!error) {
