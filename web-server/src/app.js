@@ -533,8 +533,8 @@ app.post('/search', (req, res) => {
     const query = "select companyId, name " +
                     "from company " +
                     "where name like '%" + req.body.search + "%' " + 
-                    "or exists (select 1 from CompanyProductCategory cpc " + 
-                    "           inner join ProductCategory pc on cpc.ProductCategoryId = pc.ProductCategoryId " + 
+                    "or exists (select 1 from companyproductcategory cpc " + 
+                    "           inner join productcategory pc on cpc.ProductCategoryId = pc.ProductCategoryId " + 
                     "           where company.CompanyId = cpc.CompanyId " + 
                     "           and pc.name like '%" + req.body.search + "%')"
 
@@ -543,9 +543,9 @@ app.post('/search', (req, res) => {
     //         throw error;
     //     }
     //     else {
-            connection.query(query,function(err, results, fields) { 
+            connection.query(query,function(error, results, fields) { 
                 if (error) {
-                    throw error;
+                    res.send({ error: error })
                 }
                 else {
                     let companies = []
@@ -560,11 +560,7 @@ app.post('/search', (req, res) => {
                     //         throw error;
                     //     }
                     //     else {                 
-                            res.render('search', {
-                                title: 'search',
-                                name: 'Team Kilimanjaro',
-                                companies: JSON.stringify(companies)
-                            })
+                            res.send({companies: JSON.stringify(companies)})
                     //     }
                     // });
                 }
