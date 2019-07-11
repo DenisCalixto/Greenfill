@@ -327,6 +327,30 @@ app.get('/guide', (req, res) => {
     })
 })
 
+app.get('/person/:id(\\d+)/totalpackaging', (req, res) => {  // (\\d+) means an integer will be provided
+
+    const query = "select sum(refillitem.quantity) as quantity " +
+                    "from refill " +
+                    "inner join refillitem on refill.refillid = refillitem.refillid " +
+                    "where refill.personid = " + req.params.id
+
+    let total = 0;
+    connection.query(query,function(error, results) { 
+        if (error) {
+            throw error;
+        }
+        else {
+            for (var index = 0 ; index < results.length ; index++) {
+                total = results[0].quantity;
+            }
+            
+            res.send({
+                total: total
+            })
+        }
+    });
+})
+
 app.get('/leaderboard', (req, res) => {
 
     const query = "select person.name, sum(refillitem.quantity) as quantity " +
