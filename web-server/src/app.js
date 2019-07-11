@@ -334,12 +334,13 @@ app.get('/guide', (req, res) => {
     })
 })
 
-app.get('/person/:id(\\d+)/totalpackaging', (req, res) => {  // (\\d+) means an integer will be provided
+app.get('/person/:userid/totalpackaging', (req, res) => {  // (\\d+) means an integer will be provided
 
     const query = "select sum(refillitem.quantity) as quantity " +
                     "from refill " +
                     "inner join refillitem on refill.refillid = refillitem.refillid " +
-                    "where refill.personid = " + req.params.id
+                    "inner join person on refill.personid = person.personid " +
+                    "where person.userid = '" + req.params.userid + "'"
 
     let total = 0;
     connection.query(query,function(error, results) { 
@@ -350,7 +351,7 @@ app.get('/person/:id(\\d+)/totalpackaging', (req, res) => {  // (\\d+) means an 
             for (var index = 0 ; index < results.length ; index++) {
                 total = results[0].quantity;
             }
-            
+
             res.send({
                 total: total
             })
@@ -366,34 +367,18 @@ app.get('/leaderboard', (req, res) => {
                   "inner join refillitem on refill.refillid = refillitem.refillid " +
                   "group by person.name " +
                   "order by sum(refillitem.quantity) desc " +
-                  "limit 5 "
+                  "limit 3 "
 
-    // connection.connect(function(error){
-    //     if(error) {
-    //         throw error;
-    //     }
-    //     else {
-            connection.query(query,function(error, results) { 
-                if (error) {
-                    throw error;
-                }
-                else {
-                    // connection.end(function(error){
-                    //     if(error) {
-                    //         throw error;
-                    //     }
-                    //     else {
-                            res.render('leaderboard', {
-                                title: 'Leaderboard',
-                                name: 'Team Kilimanjaro',
-                                leaders: JSON.stringify(results)
-                            })
-                    //     }
-                    // });
-                }
-            });
-    //     }
-    // });
+    connection.query(query,function(error, results) { 
+        if (error) {
+            throw error;
+        }
+        else {
+            res.send({
+                leaders: JSON.stringify(results)
+            })
+        }
+    });
 });
 
 app.get('/refill', (req, res) => {
