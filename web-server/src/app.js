@@ -553,36 +553,24 @@ app.post('/search', (req, res) => {
                     "           inner join productcategory pc on cpc.ProductCategoryId = pc.ProductCategoryId " + 
                     "           where company.CompanyId = cpc.CompanyId " + 
                     "           and pc.name like '%" + req.body.search + "%')"
-
-    // connection.connect(function(error){
-    //     if(error) {
-    //         throw error;
-    //     }
-    //     else {
-            connection.query(query,function(error, results, fields) { 
-                if (error) {
-                    res.send({ error: error })
-                }
-                else {
-                    let companies = []
-                    for (var index = 0 ; index < results.length ; index++) {
-                        let companyObject = new company.Company()
-                        companyObject.id = results[index].id;
-                        companyObject.name = results[index].name;
-                        companies.push(companyObject);
-                    }
-                    // connection.end(function(error){
-                    //     if(error) {
-                    //         throw error;
-                    //     }
-                    //     else {                 
-                            res.send({companies: JSON.stringify(companies)})
-                    //     }
-                    // });
-                }
-            });
-    //     }
-    // });
+                    
+    connection.query(query,function(error, results, fields) { 
+        if (error) {
+            res.send({ error: error })
+        }
+        else {
+            let companies = []
+            for (var index = 0 ; index < results.length ; index++) {
+                let companyObject = new company.Company()
+                companyObject.id = results[index].id;
+                companyObject.name = results[index].name;
+                companies.push(companyObject);
+            }
+            res.json({
+                companies: companies
+            })
+        }
+    });
 });
 
 app.get('/search', (req, res) => {
