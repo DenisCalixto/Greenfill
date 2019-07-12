@@ -374,8 +374,8 @@ app.get('/leaderboard', (req, res) => {
             throw error;
         }
         else {
-            res.send({
-                leaders: JSON.stringify(results)
+            res.json({
+                leaders: results
             })
         }
     });
