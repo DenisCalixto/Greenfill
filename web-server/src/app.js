@@ -562,7 +562,7 @@ app.post('/search', (req, res) => {
             let companies = []
             for (var index = 0 ; index < results.length ; index++) {
                 let companyObject = new company.Company()
-                companyObject.id = results[index].id;
+                companyObject.id = results[index].companyId;
                 companyObject.name = results[index].name;
                 companies.push(companyObject);
             }
