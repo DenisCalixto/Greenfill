@@ -70,48 +70,38 @@ app.get('/company/:id(\\d+)', (req, res) => {  // (\\d+) means an integer will b
                   "from company " +
                   "where companyid = " + req.params.id
 
-    // connection.connect(function(error){
-    //     if(error) {
-    //         throw error;
-    //     }
-    //     else
-    //     {
-            connection.query(query,function(error, results, fields) { 
-                if (error) {
-                    throw error;
-                }
-                else {
-                    let companyObject = new company.Company()
-                    for (var index = 0 ; index < results.length ; index++) {
-                        companyObject.name = results[index].name;
-                        companyObject.website = results[index].website;
-                        companyObject.city = results[index].city;
-                        companyObject.province = results[index].province;
-                        companyObject.address = results[index].address;
-                        companyObject.expiringItemsNote = results[index].expiringItemsNote;
-                        companyObject.provideReusableItemsNotes = results[index].provideReusableItemsNotes;
-                        companyObject.recencompanyObjecttory = results[index].recencompanyObjecttory;
-                        companyObject.comments = results[index].comments;
-                        companyObject.loosePercentage = results[index].loosePercentage;
-                        companyObject.discountExpiringItems = results[index].discountExpiringItems;
-                        companyObject.donateExpiringItems = results[index].donateExpiringItems;
-                        companyObject.throwOutExpiringItems = results[index].throwOutExpiringItems;
-                        companyObject.sellInBulk = results[index].sellInBulk;
-                        companyObject.byo = results[index].byo;
-                        companyObject.extraChargeSingleItem = results[index].extraChargeSingleItem;
-                        companyObject.provideReusableItems = results[index].provideReusableItems;
-                        companyObject.employeesUseSingleUseItems = results[index].employeesUseSingleUseItems;
-                        companyObject.employeesSingleUseItemsNotes = results[index].employeesSingleUseItemsNotes;
-                    }
-                    res.render('company', {
-                        title: 'Company',
-                        name: 'Team Kilimanjaro',
-                        company: JSON.stringify(companyObject)
-                    })
-                }
-            });
-    //     }
-    // });
+    connection.query(query,function(error, results, fields) { 
+        if (error) {
+            throw error;
+        }
+        else {
+            let companyObject = new company.Company()
+            for (var index = 0 ; index < results.length ; index++) {
+                companyObject.name = results[index].name;
+                companyObject.website = results[index].website;
+                companyObject.city = results[index].city;
+                companyObject.province = results[index].province;
+                companyObject.address = results[index].address;
+                companyObject.expiringItemsNote = results[index].expiringItemsNote;
+                companyObject.provideReusableItemsNotes = results[index].provideReusableItemsNotes;
+                companyObject.recencompanyObjecttory = results[index].recencompanyObjecttory;
+                companyObject.comments = results[index].comments;
+                companyObject.loosePercentage = results[index].loosePercentage;
+                companyObject.discountExpiringItems = results[index].discountExpiringItems;
+                companyObject.donateExpiringItems = results[index].donateExpiringItems;
+                companyObject.throwOutExpiringItems = results[index].throwOutExpiringItems;
+                companyObject.sellInBulk = results[index].sellInBulk;
+                companyObject.byo = results[index].byo;
+                companyObject.extraChargeSingleItem = results[index].extraChargeSingleItem;
+                companyObject.provideReusableItems = results[index].provideReusableItems;
+                companyObject.employeesUseSingleUseItems = results[index].employeesUseSingleUseItems;
+                companyObject.employeesSingleUseItemsNotes = results[index].employeesSingleUseItemsNotes;
+            }
+            res.json({
+                company: companyObject
+            }
+        }
+    });
 })
 
 app.get('/company/:idCompany(\\d+)/productcategories/', (req, res) => {
