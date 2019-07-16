@@ -99,7 +99,7 @@ app.get('/company/:id(\\d+)', (req, res) => {  // (\\d+) means an integer will b
             }
             res.json({
                 company: companyObject
-            }
+            })
         }
     });
 })
