@@ -536,7 +536,7 @@ app.get('/saverefill_simulation', (req, res) => {
 
 app.post('/search', (req, res) => {
 
-    const query = "select companyId, name " +
+    const query = "select companyId, name, address, website " +
                     "from company " +
                     "where name like '%" + req.body.search + "%' " + 
                     "or exists (select 1 from companyproductcategory cpc " + 
@@ -554,6 +554,8 @@ app.post('/search', (req, res) => {
                 let companyObject = new company.Company()
                 companyObject.id = results[index].companyId;
                 companyObject.name = results[index].name;
+                companyObject.address = results[index].address;
+                companyObject.website = results[index].website;
                 companies.push(companyObject);
             }
             res.json({
