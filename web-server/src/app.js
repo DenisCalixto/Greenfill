@@ -309,6 +309,34 @@ app.get('/company/create/', (req, res) => {
     })
 })
 
+app.get('/companies', (req, res) => {
+
+    const query = "select companyid, name, website, city, province, address " +
+                    "from company "
+                    
+    connection.query(query,function(error, results, fields) { 
+        if (error) {
+            res.send({ error: error })
+        }
+        else {
+            let companies = []
+            for (var index = 0 ; index < results.length ; index++) {
+                let companyObject = new company.Company()
+                companyObject.id = results[index].companyId;
+                companyObject.name = results[index].name;
+                companyObject.website = results[index].website;
+                companyObject.city = results[index].city;
+                companyObject.province = results[index].province;
+                companyObject.address = results[index].address;
+                companies.push(companyObject);
+            }
+            res.json({
+                companies: companies
+            })
+        }
+    });
+});
+
 app.get('/dashboard', (req, res) => {
     res.render('dashboard', {
         title: 'Dashboard',
