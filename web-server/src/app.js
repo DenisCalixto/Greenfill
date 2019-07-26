@@ -600,6 +600,28 @@ app.get('/search', (req, res) => {
     })
 })
 
+app.get('/tracking_totals/:personid(\\d+)', (req, res) => {
+
+    const query = "select MONTHNAME(refill.Date) as MonthName, Month(refill.Date) as Month, " + 
+                    " YEAR(refill.Date) as Year, sum(refillitem.quantity) as quantity " + 
+                    " from refill " + 
+                    " inner join refillitem on refill.refillid = refillitem.refillid " + 
+                    " where refill.PersonId = " + req.params.personid +
+                    " group by MONTHNAME(refill.Date), Month(refill.Date), YEAR(refill.Date) " + 
+                    " order by Month(refill.Date), YEAR(refill.Date) "
+
+    connection.query(query,function(error, results) { 
+        if (error) {
+            throw error;
+        }
+        else {
+            res.json({
+                tracking_totals: results
+            })
+        }
+    });
+});
+
 app.get('*', (req, res) => {
     res.render('404', {
         title: '404',
