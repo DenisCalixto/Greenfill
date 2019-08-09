@@ -521,7 +521,7 @@ app.get('/saverefill_simulation', (req, res) => {
                         
                         let quantity = 1;
 
-                        for (let categoryId = 1; categoryId < 15; categoryId++)
+                        for (let categoryId = 1; categoryId < 10; categoryId++)
                         {
                             let queryRefillItem = 'INSERT INTO refillitem (RefillId, ProductCategoryId, Quantity)' +
                                                     `Values (${refillId}, ${categoryId}, ${quantity})`
@@ -549,7 +549,7 @@ app.get('/saverefill_simulation', (req, res) => {
                             //     }
                             //     else {
                                     console.log('Transaction Complete.');
-                                    res.send("Refill saved!")
+                                    res.json({result: 'refil saved'})
                             //     }
                             // });
                         });
